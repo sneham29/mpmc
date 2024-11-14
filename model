@@ -1,0 +1,201 @@
+exp 11 - https://www.tinkercad.com/things/1F8PUE0xbFk-home-automation-v3
+exp 12- 
+exp 10
+#include <lpc214x.h>  void initLCD(void); //void enable(void); 
+void LCD_Write(unsigned int c); void LCD_Cmd(unsigned int LCD_Cmd); 
+void delay(void); 
+ 
+int main(void) 
+{ 
+ 	unsigned char ch[]="Embedotronics";  	  unsigned char ch1[]="Technologies"; 
+	 	  unsigned int i,j,k,t; 
+ 	 
+    initLCD(); 
+ 	 
+    for(i=0;ch[i]!='\0';i++) 
+	 	    LCD_Write(ch[i]); 
+ 
+	 	 	LCD_Cmd(0xc3); 
+    for(j=0;ch1[j]!='\0';j++) 
+	 	{ 
+	 	 	LCD_Write(ch1[j]); 
+  	 }  	 while(1){ 
+	 	for(k=0;k<16;k++) 
+	 	{ 
+	 	LCD_Cmd(0x1c); 
+	 	for(t=0;t<300000;t++); 
+	 	} 
+	 	} 
+} 
+ 
+void initLCD(void) 
+{ 
+    IO0DIR = 0x0FFFF00;     delay(); //Initial Delay 
+    LCD_Cmd(0x38); 
+ 	 	LCD_Cmd(0x01);  	 	LCD_Cmd(0x0c); 
+	 	 	LCD_Cmd(0x83); 
+	 	 	LCD_Cmd(0x06); 
+} 
+ 
+void LCD_Write(unsigned int c) 
+{ 
+    IO0PIN = (c<<16)|(1<<10);      delay(); //Pulse Enable to process it 
+} 
+        
+void LCD_Cmd(unsigned int LCD_Cmd) 
+{ 
+    IO0PIN = (LCD_Cmd<<16)|(0<<10);     delay(); //Pulse Enable to process it 
+} 
+ 
+void delay(void) {     int i=0,x=0; 
+ 	    IO0PIN|=(1<<13);     for(i=0; i<19999; i++) 
+    {  
+	 	 	 	x++;  
+	 	 	} 
+	 	 	 	IO0PIN&=~(1<<13);
+
+
+exp 9:
+PROGRAM: 1 LED Blink 
+ 
+#include <LPC214x.H> unsigned int delay; 
+int main(void) 
+{ 
+IO0DIR = (1<<20);   	 	 	 	// Configure P1.20 as Output while(1) 
+{ 
+	IO0CLR = (1<<20);  	 	 	 	// CLEAR (0) P1.20 to turn LED ON 
+for(delay=0; delay<500000; delay++);     	// delay IO0SET = (1<<20); // SET (1) P1.10 to turn LEDs OFF for(delay=0; delay<500000; delay++);            // delay 
+} 
+} 
+ 
+PROGRAM: 2 LED Switch 
+ 
+#include <lpc214x.h> 
+int main(void) 
+{ 		
+     IO1DIR &= ~(1<<16);    	 	  // explicitly making P1.16 as Input 
+     IO0DIR |= (1<<16);        
+     While (1) 
+     { 	 	  // Configuring P0.10 as Output 
+   If (!(IO1PIN & (1<<16)))   
+    { 	 	 // Evaluates to True for a 'LOW' on P1.16 
+      IO0CLR |= (1<<16);      
+    } else 
+   { 	 	// drive P0.30 LOW, turn LED ON 
+      IO0SET |= (1<<16);      
+   } 
+     } 
+  return 0; 	 	// drive P0.30 HIGH, turn LED OFF 
+} 
+
+
+
+
+
+exp 8:
+RECEIVER SIDE :
+char receivedData[50];  // Buffer to store incoming data
+
+void setup() {
+  Serial.begin(9600);  // Start serial communication at 9600 baud
+}
+
+void loop() {
+  if (Serial.available() > 0) {  // Check if data is available
+    int length = Serial.readBytesUntil('\n', receivedData, sizeof(receivedData) - 1);
+    receivedData[length] = '\0';  // Null-terminate the string
+
+    // Print the received message
+    Serial.print("Received: ");
+    Serial.println(receivedData);
+  }
+  delay(100);  // Short delay to prevent buffer overflow
+}
+SERVER SIDE:
+void setup() {
+  Serial.begin(9600);  // Start serial communication at 9600 baud
+}
+
+void loop() {
+  Serial.println("Hello from Arduino 1!");  // Send message with newline
+  delay(2000);  // Wait 2 seconds
+}
+
+
+
+
+exp 7:
+Code: 
+ 
+void setup() { 
+pinMode(A0,OUTPUT); pinMode(A1,OUTPUT); pinMode(A2,OUTPUT); 
+Serial.begin(9600); 
+} 
+ 
+void loop() { digitalWrite(A0,HIGH); digitalWrite(A1,LOW); digitalWrite(A2,LOW); Serial.println("STOP"); delay(5000); 
+ 
+digitalWrite(A0,LOW); digitalWrite(A1,HIGH); digitalWrite(A2,LOW); Serial.println("Ready"); 
+delay(2000); 
+ 
+digitalWrite(A0,LOW); digitalWrite(A1,LOW); digitalWrite(A2,HIGH); Serial.println("Go"); 
+delay(5000); 
+}  
+
+
+exp 6:
+LED FADE:
+void setup() {
+  pinMode(13, OUTPUT);  // LED connected to pin 13
+}
+
+void loop() {
+  for (int i = 0; i < 255; i++) {
+    analogWrite(13, i);  // Fade in
+    delay(5);
+  }
+  for (int i = 255; i > 0; i--) {
+    analogWrite(13, i);  // Fade out
+    delay(5);
+  }
+}
+
+LED BLINK:
+// C++ code
+//
+const int l1=13;
+const int l2=12;
+const int l3=11;
+void setup()
+{
+  pinMode(l1, OUTPUT);
+  pinMode(l2, OUTPUT);
+  pinMode(l3, OUTPUT);
+}
+
+void loop()
+{
+  digitalWrite(l1,HIGH);
+   digitalWrite(l2,HIGH);
+   digitalWrite(l3,HIGH);
+  delay(1000); // Wait for 1000 millisecond(s)
+  digitalWrite(l1, LOW);
+   digitalWrite(l2, LOW);
+   digitalWrite(l3, LOW);
+  
+  delay(1000); // Wait for 1000 millisecond(s)
+}
+
+
+EXP 4:
+
+CLR P0.7
+START:MOV P1,#50H
+LCALL DELAY
+MOV R1,#0BBH
+LCALL DELAY
+SJMP START
+DELAY:MOV R1,#10H
+L2:DJNZ R1,L2
+     RET
+
+
